@@ -56,8 +56,6 @@ margin-top:30px;
 .loading{
 font-size:30px;
 letter-spacing:3px;
-opacity:1;
-transition:opacity 1s ease;
 }
 
 .result{
@@ -92,7 +90,7 @@ to{opacity:1}
 
 <script>
 
-/* PARTICLE BACKGROUND */
+/* PARTICLES */
 
 const canvas=document.getElementById("bg")
 const ctx=canvas.getContext("2d")
@@ -148,7 +146,7 @@ startGeneration(input.value.trim())
 })
 
 
-/* VOWEL CHECK (NO Y) */
+/* VOWEL CHECK */
 
 function isVowel(c){
 return "aeiou".includes(c.toLowerCase())
@@ -203,16 +201,9 @@ let index=0
 const loadingText=document.getElementById("loadingText")
 
 const interval=setInterval(()=>{
-
-loadingText.style.opacity=0
-
-setTimeout(()=>{
 index=(index+1)%messages.length
 loadingText.textContent=messages[index]
-loadingText.style.opacity=1
-},1000)
-
-},2000)
+},700)
 
 setTimeout(()=>{
 
