@@ -40,40 +40,24 @@ font-weight:300;
 letter-spacing:4px;
 }
 
-.inputWrapper{
-position:relative;
-margin-top:30px;
-}
-
 input{
 background:transparent;
 border:none;
-border-bottom:1px solid rgba(255,255,255,0.4);
+border-bottom:1px solid rgba(255,255,255,0.5);
 color:white;
 font-size:22px;
 text-align:center;
 padding:10px 0;
 outline:none;
 width:220px;
-caret-color:transparent;
-}
-
-.cursor{
-position:absolute;
-right:-8px;
-top:2px;
-width:2px;
-height:26px;
-background:white;
-box-shadow:0 0 8px white;
-animation:cursorBlink 1.2s infinite;
+margin-top:30px;
 }
 
 .loading{
 font-size:30px;
 letter-spacing:3px;
 opacity:1;
-transition:opacity 1.5s ease;
+transition:opacity 1s ease;
 }
 
 .result{
@@ -81,7 +65,7 @@ position:absolute;
 top:50%;
 left:50%;
 transform:translate(-50%,-50%);
-font-size:22vw;
+font-size:24vw;
 font-weight:600;
 letter-spacing:10px;
 opacity:0;
@@ -94,12 +78,6 @@ from{opacity:0}
 to{opacity:1}
 }
 
-@keyframes cursorBlink{
-0%{opacity:1}
-50%{opacity:0}
-100%{opacity:1}
-}
-
 </style>
 </head>
 
@@ -109,12 +87,7 @@ to{opacity:1}
 
 <div class="container" id="inputScreen">
 <h1>please enter a name</h1>
-
-<div class="inputWrapper">
 <input id="nameInput" autocomplete="off">
-<div class="cursor"></div>
-</div>
-
 </div>
 
 <script>
@@ -229,21 +202,17 @@ const messages=[
 let index=0
 const loadingText=document.getElementById("loadingText")
 
-function nextMessage(){
+const interval=setInterval(()=>{
 
 loadingText.style.opacity=0
 
 setTimeout(()=>{
-
 index=(index+1)%messages.length
 loadingText.textContent=messages[index]
 loadingText.style.opacity=1
+},1000)
 
-},1500)
-
-}
-
-const interval=setInterval(nextMessage,3000)
+},2000)
 
 setTimeout(()=>{
 
@@ -251,7 +220,7 @@ clearInterval(interval)
 
 const grau=generateGrau(name)
 
-document.body.innerHTML='<div class="result">'+grau+'</div>'
+document.body.insertAdjacentHTML("beforeend",'<div class="result">'+grau+'</div>')
 
 },5000)
 
