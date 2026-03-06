@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Grau Generator</title>
+
+<style>
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    background: black;
+    color: white;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    overflow: hidden;
+}
+
+.container {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    text-align: center;
+    opacity: 0;
+    animation: fadeIn 2s forwards;
+}
+
+h1 {
+    font-weight: 300;
+    letter-spacing: 3px;
+}
+
+input {
+    margin-top: 20px;
+    padding: 12px 18px;
+    font-size: 18px;
+    border: none;
+    outline: none;
+    background: transparent;
+    border-bottom: 1px solid white;
+    color: white;
+    text-align: center;
+}
+
+input::placeholder {
+    color: rgba(255,255,255,0.4);
+}
+
+.loading {
+    font-size: 28px;
+    letter-spacing: 2px;
+    animation: fadeIn 1.5s forwards;
+}
+
+.result {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 15vw;
+    font-weight: 500;
+    letter-spacing: 8px;
+    opacity: 0;
+    animation: fadeIn 2s forwards;
+}
+
+@keyframes fadeIn {
+    from {opacity: 0;}
+    to {opacity: 1;}
+}
+</style>
+</head>
+
+<body>
+
+<div class="container" id="inputScreen">
+    <h1>please enter a name</h1>
+    <input id="nameInput" placeholder="enter name" autocomplete="off">
+</div>
+
+<script>
+
+const input = document.getElementById("nameInput");
+
+input.addEventListener("keydown", function(e){
+    if(e.key === "Enter"){
+        startGeneration(input.value.trim());
+    }
+});
+
+function isVowel(c){
+    return "aeiouy".includes(c.toLowerCase());
+}
+
+function generateGrau(name){
+
+    name = name.toLowerCase();
+
+    if(name.length < 2) return name + "rau";
+
+    if(!isVowel(name[1])){
+        return name[0].toUpperCase() + "rau";
+    }
+
+    let result = name[0];
+
+    let i = 1;
+
+    while(i < name.length && isVowel(name[i])){
+        result += name[i];
+        i++;
+    }
+
+    result += "rau";
+
+    return result.charAt(0).toUpperCase() + result.slice(1);
+}
+
+function startGeneration(name){
+
+    if(!name) return;
+
+    const container = document.getElementById("inputScreen");
+
+    container.innerHTML = '<div class="loading" id="loadingText">generating your grau...</div>';
+
+    const messages = [
+        "generating your grau...",
+        "grau incoming...",
+        "processing linguistic structure...",
+        "initializing grau system...",
+        "constructing rau suffix...",
+        "finalizing grau..."
+    ];
+
+    let index = 0;
+
+    const loadingText = document.getElementById("loadingText");
+
+    const interval = setInterval(()=>{
+        index = (index + 1) % messages.length;
+        loadingText.textContent = messages[index];
+    },700);
+
+    setTimeout(()=>{
+        clearInterval(interval);
+
+        const grau = generateGrau(name);
+
+        document.body.innerHTML = '<div class="result">'+ grau +'</div>';
+
+    },5000);
+}
+
+</script>
+
+</body>
+</html>
