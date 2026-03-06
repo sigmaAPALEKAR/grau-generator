@@ -90,7 +90,7 @@ to{opacity:1}
 
 <script>
 
-/* PARTICLES */
+/* PARTICLE BACKGROUND */
 
 const canvas=document.getElementById("bg")
 const ctx=canvas.getContext("2d")
@@ -134,8 +134,7 @@ requestAnimationFrame(animate)
 
 animate()
 
-
-/* INPUT grgw*/
+/* INPUT */
 
 const input=document.getElementById("nameInput")
 
@@ -145,13 +144,11 @@ startGeneration(input.value.trim())
 }
 })
 
-
-/* VOWEL CHECK */
+/* VOWEL CHECK (Y REMOVED) */
 
 function isVowel(c){
 return "aeiou".includes(c.toLowerCase())
 }
-
 
 /* GRAU GENERATION */
 
@@ -177,7 +174,6 @@ result+="rau"
 
 return result.toUpperCase()
 }
-
 
 /* GENERATION FLOW */
 
@@ -211,7 +207,13 @@ clearInterval(interval)
 
 const grau=generateGrau(name)
 
-document.body.insertAdjacentHTML("beforeend",'<div class="result">'+grau+'</div>')
+/* remove loading screen */
+container.remove()
+
+/* show final grau */
+document.body.insertAdjacentHTML("beforeend",
+'<div class="result">'+grau+'</div>'
+)
 
 },5000)
 
