@@ -5,152 +5,256 @@
 <title>Grau Generator</title>
 
 <style>
-html, body {
-    margin: 0;
-    padding: 0;
-    height: 100%;
-    background: black;
-    color: white;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    overflow: hidden;
+
+html,body{
+margin:0;
+padding:0;
+height:100%;
+background:black;
+color:white;
+font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+overflow:hidden;
 }
 
-.container {
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    text-align: center;
-    opacity: 0;
-    animation: fadeIn 2s forwards;
+canvas{
+position:fixed;
+top:0;
+left:0;
+z-index:0;
 }
 
-h1 {
-    font-weight: 300;
-    letter-spacing: 3px;
+.container{
+position:relative;
+z-index:2;
+height:100%;
+display:flex;
+flex-direction:column;
+align-items:center;
+justify-content:center;
+text-align:center;
+animation:fadeIn 2s forwards;
 }
 
-input {
-    margin-top: 20px;
-    padding: 12px 18px;
-    font-size: 18px;
-    border: none;
-    outline: none;
-    background: transparent;
-    border-bottom: 1px solid white;
-    color: white;
-    text-align: center;
+h1{
+font-weight:300;
+letter-spacing:4px;
 }
 
-input::placeholder {
-    color: rgba(255,255,255,0.4);
+.inputWrapper{
+position:relative;
+margin-top:30px;
 }
 
-.loading {
-    font-size: 28px;
-    letter-spacing: 2px;
-    animation: fadeIn 1.5s forwards;
+input{
+background:transparent;
+border:none;
+border-bottom:1px solid rgba(255,255,255,0.4);
+color:white;
+font-size:22px;
+text-align:center;
+padding:10px 0;
+outline:none;
+width:220px;
+caret-color:transparent;
 }
 
-.result {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 15vw;
-    font-weight: 500;
-    letter-spacing: 8px;
-    opacity: 0;
-    animation: fadeIn 2s forwards;
+.cursor{
+position:absolute;
+right:-8px;
+top:2px;
+width:2px;
+height:26px;
+background:white;
+box-shadow:0 0 8px white;
+animation:cursorBlink 1.2s infinite;
 }
 
-@keyframes fadeIn {
-    from {opacity: 0;}
-    to {opacity: 1;}
+.loading{
+font-size:30px;
+letter-spacing:3px;
+opacity:1;
+transition:opacity 1.5s ease;
 }
+
+.result{
+position:absolute;
+top:50%;
+left:50%;
+transform:translate(-50%,-50%);
+font-size:22vw;
+font-weight:600;
+letter-spacing:10px;
+opacity:0;
+animation:fadeIn 2s forwards;
+z-index:2;
+}
+
+@keyframes fadeIn{
+from{opacity:0}
+to{opacity:1}
+}
+
+@keyframes cursorBlink{
+0%{opacity:1}
+50%{opacity:0}
+100%{opacity:1}
+}
+
 </style>
 </head>
 
 <body>
 
+<canvas id="bg"></canvas>
+
 <div class="container" id="inputScreen">
-    <h1>please enter a name</h1>
-    <input id="nameInput" placeholder="enter name" autocomplete="off">
+<h1>please enter a name</h1>
+
+<div class="inputWrapper">
+<input id="nameInput" autocomplete="off">
+<div class="cursor"></div>
+</div>
+
 </div>
 
 <script>
 
-const input = document.getElementById("nameInput");
+/* PARTICLE BACKGROUND */
 
-input.addEventListener("keydown", function(e){
-    if(e.key === "Enter"){
-        startGeneration(input.value.trim());
-    }
-});
+const canvas=document.getElementById("bg")
+const ctx=canvas.getContext("2d")
+
+canvas.width=window.innerWidth
+canvas.height=window.innerHeight
+
+let particles=[]
+
+for(let i=0;i<80;i++){
+particles.push({
+x:Math.random()*canvas.width,
+y:Math.random()*canvas.height,
+vx:(Math.random()-0.5)*0.3,
+vy:(Math.random()-0.5)*0.3,
+size:Math.random()*2
+})
+}
+
+function animate(){
+
+ctx.clearRect(0,0,canvas.width,canvas.height)
+
+ctx.fillStyle="white"
+
+particles.forEach(p=>{
+p.x+=p.vx
+p.y+=p.vy
+
+if(p.x<0||p.x>canvas.width)p.vx*=-1
+if(p.y<0||p.y>canvas.height)p.vy*=-1
+
+ctx.beginPath()
+ctx.arc(p.x,p.y,p.size,0,Math.PI*2)
+ctx.fill()
+})
+
+requestAnimationFrame(animate)
+
+}
+
+animate()
+
+
+/* INPUT */
+
+const input=document.getElementById("nameInput")
+
+input.addEventListener("keydown",e=>{
+if(e.key==="Enter"){
+startGeneration(input.value.trim())
+}
+})
+
+
+/* VOWEL CHECK (NO Y) */
 
 function isVowel(c){
-    return "aeiouy".includes(c.toLowerCase());
+return "aeiou".includes(c.toLowerCase())
 }
+
+
+/* GRAU GENERATION */
 
 function generateGrau(name){
 
-    name = name.toLowerCase();
+name=name.toLowerCase()
 
-    if(name.length < 2) return name + "rau";
+if(name.length<2) return (name+"rau").toUpperCase()
 
-    if(!isVowel(name[1])){
-        return name[0].toUpperCase() + "rau";
-    }
-
-    let result = name[0];
-
-    let i = 1;
-
-    while(i < name.length && isVowel(name[i])){
-        result += name[i];
-        i++;
-    }
-
-    result += "rau";
-
-    return result.charAt(0).toUpperCase() + result.slice(1);
+if(!isVowel(name[1])){
+return (name[0]+"rau").toUpperCase()
 }
+
+let result=name[0]
+let i=1
+
+while(i<name.length && isVowel(name[i])){
+result+=name[i]
+i++
+}
+
+result+="rau"
+
+return result.toUpperCase()
+}
+
+
+/* GENERATION FLOW */
 
 function startGeneration(name){
 
-    if(!name) return;
+if(!name)return
 
-    const container = document.getElementById("inputScreen");
+const container=document.getElementById("inputScreen")
 
-    container.innerHTML = '<div class="loading" id="loadingText">generating your grau...</div>';
+container.innerHTML='<div class="loading" id="loadingText">generating your grau...</div>'
 
-    const messages = [
-        "generating your grau...",
-        "grau incoming...",
-        "processing linguistic structure...",
-        "initializing grau system...",
-        "constructing rau suffix...",
-        "finalizing grau..."
-    ];
+const messages=[
+"generating your grau...",
+"grau incoming...",
+"processing phonetics...",
+"constructing rau suffix...",
+"finalizing grau..."
+]
 
-    let index = 0;
+let index=0
+const loadingText=document.getElementById("loadingText")
 
-    const loadingText = document.getElementById("loadingText");
+function nextMessage(){
 
-    const interval = setInterval(()=>{
-        index = (index + 1) % messages.length;
-        loadingText.textContent = messages[index];
-    },700);
+loadingText.style.opacity=0
 
-    setTimeout(()=>{
-        clearInterval(interval);
+setTimeout(()=>{
 
-        const grau = generateGrau(name);
+index=(index+1)%messages.length
+loadingText.textContent=messages[index]
+loadingText.style.opacity=1
 
-        document.body.innerHTML = '<div class="result">'+ grau +'</div>';
+},1500)
 
-    },5000);
+}
+
+const interval=setInterval(nextMessage,3000)
+
+setTimeout(()=>{
+
+clearInterval(interval)
+
+const grau=generateGrau(name)
+
+document.body.innerHTML='<div class="result">'+grau+'</div>'
+
+},5000)
+
 }
 
 </script>
